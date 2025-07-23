@@ -10,19 +10,19 @@ FRAMERATE = 24
 SCREEN_SIZE = (540, 860)
 
 
-squares_group = pg.sprite.Group(
-    Square((150, 660), colors.RED),
-    Square((250, 660), colors.GREEN),
-    Square((350, 660), colors.BLUE),
-)
-
-walls_group = pg.sprite.Group(
+walls = pg.sprite.Group(
     Wall((0, 810), pg.Vector2(540, 50)),
     Wall((0, 0), pg.Vector2(540, 50)),
     Wall((0, 0), pg.Vector2(50, 860)),
     Wall((490, 0), pg.Vector2(50, 860)),
 )
-all_groups = walls_group, squares_group
+squares = pg.sprite.Group(
+    Square((150, 660), colors.RED),
+    Square((250, 660), colors.GREEN),
+    Square((350, 660), colors.BLUE),
+)
+all_sprites = pg.sprite.Group(*walls, *squares)
+
 
 if __name__ == "__main__":
     pg.init()
@@ -33,19 +33,18 @@ if __name__ == "__main__":
     clock = pg.time.Clock()
 
     is_running = True
-    for square in squares_group:
-        square.push(45)
-
     while is_running:
         delta = clock.tick(FRAMERATE) / 1_000
         screen.fill(colors.WHITE)
-        for group in all_groups:
-            group.update(delta, walls_group)
-            group.draw(screen)
+        all_sprites.update(delta)
+        all_sprites.draw(screen)
+        for obj in squares:
+            obj.check_collisions(all_sprites)
 
-        pg.display.flip()
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 is_running = False
+
+        pg.display.flip()
 
     pg.quit()

@@ -15,6 +15,7 @@ class Square(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = position[0]
         self.rect.y = position[1]
+        self.push(45)
 
     def push(self, angle: float):
         self.angle = angle
@@ -22,8 +23,10 @@ class Square(Sprite):
             math.cos(math.radians(angle)), math.sin(math.radians(angle))
         )
 
-    def update(self, delta: int, group: pg.sprite.Group):
-        self.rect.center += self.vector * self.speed * delta
+    def check_collisions(self, group):
         collisions = spritecollide(self, group, False)
-        angle = len(collisions) * 90
-        self.push(self.angle + angle)
+        if len(collisions) > 1:
+            self.push(self.angle + 90)
+
+    def update(self, delta: int):
+        self.rect.center += self.vector * self.speed * delta
