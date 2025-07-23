@@ -2,9 +2,11 @@ from typing import Tuple
 import pygame as pg
 from pygame.sprite import Sprite
 
+import colors
+
 
 class Wall(Sprite):
-    color = pg.Color(0, 0, 0)
+    color = colors.BLACK
 
     def __init__(self, position: Tuple[int, int], size: pg.Vector2):
         super().__init__()

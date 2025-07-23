@@ -2,18 +2,18 @@ import pygame as pg
 
 from squares import Square
 from walls import Wall
+import colors
 
 
 TITLE = "Squares' Race"
 FRAMERATE = 24
 SCREEN_SIZE = (540, 860)
-WHITE_COLOR = pg.Color(255, 255, 255)
 
 
 squares_group = pg.sprite.Group(
-    Square((150, 660), pg.Color(255, 0, 0)),
-    Square((250, 660), pg.Color(0, 255, 0)),
-    Square((350, 660), pg.Color(0, 0, 255)),
+    Square((150, 660), colors.RED),
+    Square((250, 660), colors.GREEN),
+    Square((350, 660), colors.BLUE),
 )
 
 walls_group = pg.sprite.Group(
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     while is_running:
         delta = clock.tick(FRAMERATE) / 1_000
-        screen.fill(WHITE_COLOR)
+        screen.fill(colors.WHITE)
         for group in all_groups:
             group.update(delta, walls_group)
             group.draw(screen)
