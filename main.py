@@ -6,17 +6,17 @@ import colors
 
 
 TITLE = "Squares' Race"
-FRAMERATE = 24
+FRAMERATE = 60
 SCREEN_SIZE = (540, 860)
 
 
-walls = pg.sprite.Group(
-    Wall((270, 835), pg.Vector2(540, 50)),
-    Wall((270, 25), pg.Vector2(540, 50)),
-    Wall((25, 430), pg.Vector2(50, 860)),
-    Wall((515, 430), pg.Vector2(50, 860)),
+walls = (
+    Wall((270, 860 + 50), pg.Vector2(540, 100)),
+    Wall((270, -50), pg.Vector2(540, 100)),
+    Wall((-50, 430), pg.Vector2(100, 860)),
+    Wall((540 + 50, 430), pg.Vector2(100, 860)),
 )
-squares = pg.sprite.Group(
+squares = (
     Square((150, 660), colors.RED),
     Square((200, 660), colors.RED),
     Square((250, 660), colors.GREEN),
@@ -24,7 +24,7 @@ squares = pg.sprite.Group(
     Square((350, 660), colors.BLUE),
     Square((400, 660), colors.BLUE),
 )
-all_sprites = pg.sprite.Group(*walls, *squares)
+solids_group = pg.sprite.Group(*squares, *walls)
 
 
 if __name__ == "__main__":
@@ -38,21 +38,25 @@ if __name__ == "__main__":
     for square in squares:
         import random
 
-        direction = pg.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
-        square.vector = direction
-        square.velocity = 150
+        speedx = random.uniform(-200, 200)
+        speedy = random.uniform(-200, 200)
+        square.velocity = pg.Vector2(speedx, speedy)
 
     is_running = True
     while is_running:
-        delta = clock.tick(FRAMERATE) / 1_000
+        delta = clock.tick(FRAMERATE) / 1_000.0
         screen.fill(colors.WHITE)
-        all_sprites.update(delta)
-        all_sprites.draw(screen)
-        collisions = pg.sprite.groupcollide(squares, all_sprites, False, False)
-        for square, others in collisions.items():
-            for other in others:
-                if square is not other:
-                    square.collide(other)
+
+        for i, square in enumerate(squares, start=1):
+            for wall in walls:
+                if square.has_collision(wall):
+                    square.resolve_static_collision(wall)
+            for other in squares[i:]:
+                if square.has_collision(other):
+                    square.resolve_dynamic_collision(other)
+
+        solids_group.update(delta)
+        solids_group.draw(screen)
 
         for event in pg.event.get():
             if event.type == pg.QUIT:

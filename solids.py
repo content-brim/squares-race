@@ -1,46 +1,32 @@
 import pygame as pg
-import math
 
 
-def get_overlap(a, b):
-    overlap = a.rect.clip(b.rect)
-    if overlap.width > 0 and overlap.height > 0:
-        return overlap
+class Solid(pg.sprite.Sprite):
+    is_dynamic: bool
 
-
-class StaticSolid(pg.sprite.Sprite):
     def __init__(self, position, size, color, *groups):
         super().__init__(*groups)
         self.image = pg.Surface(size)
         self.image.fill(color)
         self.rect = self.image.get_rect(center=position)
-        self.velocity = 0.0
-
-
-class DynamicSolid(StaticSolid):
-    def __init__(self, position, size, color, *groups):
-        super().__init__(position, size, color, *groups)
-        self.vector = pg.Vector2(0, 0)
+        self.velocity = pg.Vector2(0, 0)
 
     def update(self, delta):
-        if self.velocity > 0:
-            self.rect.center += self.vector * self.velocity * delta
-
-    def collide(self, other, is_handled=False):
-        overlap = get_overlap(self, other)
-        if not overlap:
+        if self.velocity.length() == 0:
             return
 
-        if hasattr(other, "collide") and not is_handled:
-            other.collide(self, is_handled=True)
+        self.rect.move_ip(self.velocity * delta)
 
-        center_delta = pg.Vector2(self.rect.center) - pg.Vector2(other.rect.center)
+    def has_collision(self, other):
+        return self.rect.colliderect(other.rect)
 
-        if overlap.width < overlap.height:
-            normal = pg.Vector2(1, 0) if center_delta.x > 0 else pg.Vector2(-1, 0)
-            self.rect.move_ip(normal * overlap.width)
-        else:
-            normal = pg.Vector2(0, 1) if center_delta.y > 0 else pg.Vector2(0, -1)
-            self.rect.move_ip(normal * overlap.height)
+    def resolve_static_collision(self, other):
+        assert not other.is_dynamic
 
-        self.vector = (self.vector - 2 * self.vector.dot(normal) * normal).normalize()
+    def resolve_dynamic_collision(self, other):
+        assert other.is_dynamic
+
+    def get_overlap(self, other):
+        overlap = self.rect.clip(other.rect)
+        if overlap.width > 0 and overlap.height > 0:
+            return overlap
