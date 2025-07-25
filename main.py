@@ -17,17 +17,17 @@ clock = pg.time.Clock()
 
 
 walls = (
-    Wall((270, 910), pg.Vector2(540, 100)),
-    Wall((270, -50), pg.Vector2(540, 100)),
-    Wall((-50, 430), pg.Vector2(100, 860)),
-    Wall((590, 430), pg.Vector2(100, 860)),
-    Wall((135, 25), pg.Vector2(270, 50)),
-    Wall((135, 430), pg.Vector2(270, 100)),
-    Wall((405, 215), pg.Vector2(270, 100)),
-    Wall((405, 645), pg.Vector2(270, 100)),
+    Wall((270, 910), (540, 100)),
+    Wall((270, -50), (540, 100)),
+    Wall((-50, 430), (100, 860)),
+    Wall((590, 430), (100, 860)),
+    Wall((135, 25), (270, 50)),
+    Wall((135, 430), (270, 100)),
+    Wall((405, 215), (270, 100)),
+    Wall((405, 645), (270, 100)),
 )
 interactables_group = pg.sprite.Group(
-    Finish((405, 25), pg.Vector2(270, 50)),
+    Finish((405, 25), (270, 50)),
 )
 squares = (
     Square((150, 800), colors.RED),

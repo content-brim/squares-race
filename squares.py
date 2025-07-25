@@ -1,14 +1,15 @@
 import pygame as pg
 
 from solids import Solid
+from surfaces import ColorSurfaceMixin
 
 
-class Square(Solid):
+class Square(Solid, ColorSurfaceMixin):
     is_dynamic = True
 
     def __init__(self, position, color):
         size = (40, 40)
-        super().__init__(position, size, color)
+        super().__init__(position, image_kwargs={"size": size, "color": color})
 
     def resolve_overlap(self, other, overlap):
         if overlap.width < overlap.height:

@@ -4,10 +4,9 @@ import pygame as pg
 class Solid(pg.sprite.Sprite):
     is_dynamic: bool
 
-    def __init__(self, position, size, color, *groups):
-        super().__init__(*groups)
-        self.image = pg.Surface(size)
-        self.image.fill(color)
+    def __init__(self, position, image_kwargs):
+        super().__init__()
+        self.init_image(**image_kwargs)
         self.rect = self.image.get_rect(center=position)
         self.velocity = pg.Vector2(0, 0)
 
